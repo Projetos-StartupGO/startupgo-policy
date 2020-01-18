@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 import environ
+from django.utils.functional import SimpleLazyObject
+
+from authentication.key import get_public_key
 
 env = environ.Env(
     # set casting, default value
@@ -245,3 +248,25 @@ CKEDITOR_CONFIGS = {
     },
 }
 CKEDITOR_UPLOAD_PATH = "uploads/"
+
+# ========================= REST FRAMEWORK ================================== #
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'project.token_authentication.ExpiringTokenAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 50
+}
+# ========================= AUTHENTICATION ================================== #
+AUTHENTICATION_API_BASE_URI = env.str('AUTHENTICATION_API_BASE_URI')
+AUTHENTICATION_PUBLIC_KEY = os.environ.get(
+    'AUTHENTICATION_PUBLIC_KEY',
+    get_public_key(AUTHENTICATION_API_BASE_URI)
+)
