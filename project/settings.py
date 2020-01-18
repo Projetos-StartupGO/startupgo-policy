@@ -19,7 +19,8 @@ from authentication.key import get_public_key
 
 env = environ.Env(
     # set casting, default value
-    DEBUG=(bool, False)
+    DEBUG=(bool, False),
+    EMAIL_USE_TLS=(bool, False),
 )
 # reading .env file
 environ.Env.read_env()
@@ -65,6 +66,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.postgres',
     'django.contrib.humanize',
     'django.forms',
 
@@ -267,3 +269,13 @@ REST_FRAMEWORK = {
 # ========================= AUTHENTICATION ================================== #
 AUTHENTICATION_API_BASE_URI = env.str('AUTHENTICATION_API_BASE_URI')
 AUTHENTICATION_PUBLIC_KEY_JWK = env.str('AUTHENTICATION_PUBLIC_KEY_JWK')
+
+# ================================== E-MAIL ================================= #
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
+EMAIL_HOST_REPLY_TO = env.str('EMAIL_HOST_REPLY_TO')
+EMAIL_HOST_FROM = env.str('EMAIL_HOST_FROM')
+EMAIL_HOST = env.str('EMAIL_HOST')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
+EMAIL_PORT = env.str('EMAIL_PORT')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')

@@ -1,9 +1,10 @@
 DOCKER_COMPOSE_ENV_FILE=conf/docker-compose_dev.yml
-#CELERY_SERVICES=-A apps.mp_payment worker
+CELERY_SERVICES=-A policy worker
 DJANGO_SETTINGS_MODULE=project.settings
 
 .PHONY: init
-init: start_services broker_kill
+init: start_services export_settings
+	@make broker_create
 	@echo "Initiliazing application's data and state"
 	./manage.py makemigrations
 	./manage.py migrate
@@ -13,7 +14,7 @@ init: start_services broker_kill
 	./manage.py loaddata 001_privacy
 	@make services
 	@echo "\nAddress: http://localhost:8000/admin"
-	@echo "Credentials:\n  - user: admin@admin.org\n  - pass: 123"
+	@echo "Credentials:\n  - user: admin\n  - pass: 123"
 
 .PHONY: export_settings
 export_settings:
@@ -41,7 +42,7 @@ restart_ngrok:
 .PHONY: down
 down:
 	rm -f db.sqlite3
-	docker-compose -f $(DOCKER_COMPOSE_ENV_FILE) down
+	docker-compose -f $(DOCKER_COMPOSE_ENV_FILE) down --remove-orphans
 
 .PHONY: build
 build:

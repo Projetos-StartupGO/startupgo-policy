@@ -1,35 +1,9 @@
 version: '3.5'
 services:
-  postgres:
-    image: postgres:9.6-alpine
-    container_name: startupgo_policy-postgres
-    networks:
-      - postgres
-    volumes:
-      - /tmp/bkp:/docker-entrypoint-initdb.d
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_DB=startupgo_policy
-      - POSTGRES_USER=startupgo_policy
-      - POSTGRES_PASSWORD=startupgo_policy
-
-  pgadmin:
-    image: thajeztah/pgadmin4
-    container_name: startupgo_policy-pgadmin_dev
-    ports:
-      - "5050:5050"
-    depends_on:
-      - postgres
-    networks:
-      - postgres
-    volumes:
-      - pgadmin_data:/pgadmin
-
   rabbitmq:
     image: rabbitmq:3-management
     container_name: startupgo_policy-rabbitmq
-    hostname: mprabbitmq # database unique name
+    hostname: startupgo_policy-rabbitmq # database unique name
     networks:
       - rabbitmq
     environment:
@@ -51,11 +25,16 @@ services:
     networks:
       - rabbitmq
 
+  mailhog:
+    image: blueimp/mailhog
+    container_name: startupgo_policy-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
 volumes:
   pgadmin_data:
 
 networks:
-  postgres:
-    name: local_postgres
   rabbitmq:
     name: local_rabbitmq
