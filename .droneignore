@@ -1,0 +1,12 @@
+__pycache__
+.idea/
+*.pyc
+.coverage
+cover
+logs/
+*.pid
+project/.env
+project/.env-sample
+conf/Dockerfile
+conf/docker-compose.yml
+conf/docker-compose_dev.yml

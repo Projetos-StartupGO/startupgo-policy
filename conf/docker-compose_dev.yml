@@ -1,0 +1,61 @@
+version: '3.5'
+services:
+  postgres:
+    image: postgres:9.6-alpine
+    container_name: startupgo_policy-postgres
+    networks:
+      - postgres
+    volumes:
+      - /tmp/bkp:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=startupgo_policy
+      - POSTGRES_USER=startupgo_policy
+      - POSTGRES_PASSWORD=startupgo_policy
+
+  pgadmin:
+    image: thajeztah/pgadmin4
+    container_name: startupgo_policy-pgadmin_dev
+    ports:
+      - "5050:5050"
+    depends_on:
+      - postgres
+    networks:
+      - postgres
+    volumes:
+      - pgadmin_data:/pgadmin
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: startupgo_policy-rabbitmq
+    hostname: mprabbitmq # database unique name
+    networks:
+      - rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=startupgo_policy
+      - RABBITMQ_DEFAULT_PASS=startupgo_policy
+      - RABBITMQ_ERLANG_COOKIE=startupgo_policyrabbitmqservice
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  flower:
+    image: hugoseabra19/docker-celery-flower
+    container_name: startupgo_policy-flower
+    environment:
+      - CELERY_BROKER_URL=amqp://startupgo_policy:startupgo_policy@rabbitmq:5672/
+      - FLOWER_PORT=5555
+    ports:
+      - 5555:5555
+    networks:
+      - rabbitmq
+
+volumes:
+  pgadmin_data:
+
+networks:
+  postgres:
+    name: local_postgres
+  rabbitmq:
+    name: local_rabbitmq
