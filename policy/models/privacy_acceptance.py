@@ -13,6 +13,7 @@ class PrivacyAcceptance(models.Model):
         verbose_name = _('Privacy Acceptance')
         verbose_name_plural = _('Privacy Acceptances')
         ordering = ('-created',)
+        unique_together = (('member', 'version'),)
 
     uuid = models.UUIDField(
         default=uuid.uuid4,

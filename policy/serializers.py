@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from authentication.user import JWTUser
 from . import models
 
 
@@ -33,9 +34,12 @@ class PrivacyAcceptanceSerializer(serializers.ModelSerializer):
         fields = (
             'pk',
             'privacy',
-            'member',
             'created',
         )
+
+    def __init__(self, user: JWTUser, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
@@ -48,13 +52,23 @@ class PrivacyAcceptanceSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-
+        attrs['member'] = self.user.pk
         privacy = attrs.get('privacy')
+
+        model_class = self.Meta.model
+
         if privacy:
             attrs['version'] = privacy.version
+            try:
+                self.instance = model_class.objects.get(
+                    member=self.user.pk,
+                    privacy=privacy,
+                    version=privacy.version,
+                )
+            except model_class.DoesNotExist:
+                pass
 
         return attrs
-
 
 
 class TermAcceptanceSerializer(serializers.ModelSerializer):
@@ -63,9 +77,12 @@ class TermAcceptanceSerializer(serializers.ModelSerializer):
         fields = (
             'pk',
             'term',
-            'member',
             'created',
         )
+
+    def __init__(self, user: JWTUser, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
@@ -78,9 +95,17 @@ class TermAcceptanceSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-
+        attrs['member'] = self.user.pk
         term = attrs.get('term')
+
+        model_class = self.Meta.model
         if term:
             attrs['version'] = term.version
+            try:
+                self.instance = model_class.objects.get(member=self.user.pk,
+                                                        term=term,
+                                                        version=term.version)
+            except model_class.DoesNotExist:
+                pass
 
         return attrs

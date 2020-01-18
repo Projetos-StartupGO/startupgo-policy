@@ -21,6 +21,11 @@ class PrivacyViewset(ReadOnlyModelViewSet):
 
 
 class AcceptanceMixin(ModelViewSet):
+
+    def get_serializer(self, *args, **kwargs):
+        kwargs.update({'user': self.request.user})
+        return super().get_serializer(*args, **kwargs)
+
     def list(self, request, *args, **kwargs):
         member = request.query_params.get('member', None)
         version = request.query_params.get('version', None)

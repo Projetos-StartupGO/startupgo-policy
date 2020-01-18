@@ -13,6 +13,7 @@ class TermAcceptance(models.Model):
         verbose_name = _('Term of use Acceptance')
         verbose_name_plural = _('Term of use Acceptances')
         ordering = ('-created',)
+        unique_together = (('member', 'version'),)
 
     uuid = models.UUIDField(
         default=uuid.uuid4,

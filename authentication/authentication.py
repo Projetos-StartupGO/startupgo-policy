@@ -26,8 +26,8 @@ class JWTAuthentication(BaseAuthentication):
 
     def authenticate(self, request):
 
-        if hasattr(settings, 'AUTHENTICATION_PUBLIC_KEY') is False:
-            msg = _('JTW settings misconfigured: AUTHENTICATION_PUBLIC_KEY'
+        if hasattr(settings, 'AUTHENTICATION_PUBLIC_KEY_JWK') is False:
+            msg = _('JTW settings misconfigured: AUTHENTICATION_PUBLIC_KEY_JWK'
                     ' does not exist in settings.')
             raise exceptions.AuthenticationFailed(msg)
 
@@ -59,7 +59,7 @@ class JWTAuthentication(BaseAuthentication):
     @staticmethod
     def authenticate_credentials(token):
         try:
-            public_key = json.dumps(settings.AUTHENTICATION_PUBLIC_KEY)
+            public_key = settings.AUTHENTICATION_PUBLIC_KEY_JWK
             public_key = algorithms.RSAAlgorithm.from_jwk(public_key)
             decoded = decode(token, public_key, algorithms=["RS256"])
 
