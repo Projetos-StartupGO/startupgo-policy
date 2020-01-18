@@ -34,31 +34,46 @@ class PrivacyAcceptanceSerializer(serializers.ModelSerializer):
             'pk',
             'privacy',
             'member',
-            'version',
             'created',
         )
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['privacy_data'] = \
-            PrivacySerializer().to_representation(instance.privacy)
+
+        privacy_data = PrivacySerializer().to_representation(instance.privacy)
+        del privacy_data['content']
+
+        rep['privacy_data'] = privacy_data
         return rep
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+
+        privacy = attrs.get('privacy')
+        if privacy:
+            attrs['version'] = privacy.version
+
+        return attrs
+
 
 
 class TermAcceptanceSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.TermAcceptance
         fields = (
             'pk',
-            'member',
             'term',
+            'member',
             'created',
         )
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['term_data'] = TermSerializer().to_representation(instance.term)
+
+        term_data = TermSerializer().to_representation(instance.term)
+        del term_data['content']
+
+        rep['term_data'] = term_data
         return rep
 
     def validate(self, attrs):

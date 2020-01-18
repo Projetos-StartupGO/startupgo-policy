@@ -34,6 +34,7 @@ class TermAdmin(admin.ModelAdmin):
     readonly_fields = [
         'created',
         'last_updated',
+        'pk',
     ]
 
     def get_changeform_initial_data(self, request):
@@ -57,6 +58,7 @@ class TermAdmin(admin.ModelAdmin):
     readonly_fields = [
         'created',
         'last_updated',
+        'pk',
     ]
 
     def get_changeform_initial_data(self, request):
@@ -77,6 +79,7 @@ class PrivacyAcceptanceAdmin(admin.ModelAdmin):
         'created',
     ]
     readonly_fields = (
+        'pk',
         'privacy',
         'member',
         'version',
@@ -102,6 +105,7 @@ class TermAcceptanceAdmin(admin.ModelAdmin):
         'created',
     ]
     readonly_fields = (
+        'pk',
         'term',
         'member',
         'version',
