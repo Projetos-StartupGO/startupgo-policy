@@ -7,4 +7,4 @@ requests==2.22.0
 uuid==1.30
 django-ckeditor==5.8.0
 pyjwt[crypto]==1.7.1
-lxml==4.4.2
+lxml==4.9.1
